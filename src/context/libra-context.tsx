@@ -1,15 +1,15 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Book, Member, Transaction, Notification } from '@/lib/types';
+import { Book, Member, Transaction, Notification, AuditEvent } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 
 interface LibraContextType {
   books: Book[];
   members: Member[];
   transactions: Transaction[];
   notifications: Notification[];
+  auditLogs: AuditEvent[];
   addBook: (book: Omit<Book, 'id'>) => void;
   updateBook: (id: string, book: Partial<Book>) => void;
   deleteBook: (id: string) => void;
@@ -20,6 +20,7 @@ interface LibraContextType {
   borrowBook: (memberId: string, bookId: string, dueDate: string) => void;
   returnBook: (transactionId: string) => void;
   extendLoan: (transactionId: string, days: number) => void;
+  voidTransaction: (id: string) => void;
   markNotificationAsRead: (id: string) => void;
   clearNotifications: () => void;
   searchAll: (query: string) => { books: Book[], members: Member[], transactions: Transaction[] };
@@ -32,7 +33,7 @@ const initialBooks: Book[] = [
   { id: "2", title: "To Kill a Mockingbird", author: "Harper Lee", isbn: "978-0061120084", category: "Classic", status: "Borrowed", publishYear: 1960, availableCopies: 0, totalCopies: 3, summary: "A profound exploration of racial injustice and the loss of innocence in the American South." },
   { id: "3", title: "Dune", author: "Frank Herbert", isbn: "978-0441172719", category: "Sci-Fi", status: "Available", publishYear: 1965, availableCopies: 2, totalCopies: 4, summary: "An epic science fiction saga set on the desert planet Arrakis." },
   { id: "4", title: "Silent Spring", author: "Rachel Carson", isbn: "978-0618249060", category: "Non-Fiction", status: "Available", publishYear: 1962, availableCopies: 1, totalCopies: 1, summary: "A landmark environmental science book documenting the adverse effects of pesticides." },
-  { id: "5", title: "The Hobbit", author: "J.R.R. Tolkien", isbn: "978-0547928227", category: "Fantasy", status: "Damaged", publishYear: 1937, availableCopies: 0, totalCopies: 2, summary: "The classic fantasy adventure of Bilbo Baggins." },
+  { id: "5", title: "The Hobbit", author: "J.R.R. Tolkien", isbn: "978-0547928227", category: "Fantasy", status: "Available", publishYear: 1937, availableCopies: 2, totalCopies: 2, summary: "The classic fantasy adventure of Bilbo Baggins." },
   { id: "6", title: "Zero to One", author: "Peter Thiel", isbn: "978-0804139298", category: "Business", status: "Available", publishYear: 2014, availableCopies: 3, totalCopies: 3, summary: "Notes on startups, or how to build the future." },
   { id: "7", title: "The Innovators", author: "Walter Isaacson", isbn: "978-1476708690", category: "Technology", status: "Available", publishYear: 2014, availableCopies: 1, totalCopies: 1, summary: "A history of the people who created the computer and the internet." },
 ];
@@ -45,34 +46,51 @@ const initialMembers: Member[] = [
 
 const initialTransactions: Transaction[] = [
   { id: "T-8821", bookId: "1", bookTitle: "The Great Gatsby", memberId: "1", memberName: "Alice Johnson", borrowDate: "Oct 20, 2026", dueDate: "Nov 03, 2026", status: "Borrowed" },
-  { id: "T-9012", bookId: "3", bookTitle: "Dune", memberId: "2", memberName: "Robert Smith", borrowDate: "Oct 15, 2026", dueDate: "Oct 29, 2026", status: "Overdue" },
+  { id: "T-9012", bookId: "2", bookTitle: "To Kill a Mockingbird", memberId: "2", memberName: "Robert Smith", borrowDate: "Oct 15, 2026", dueDate: "Oct 29, 2026", status: "Overdue" },
 ];
 
-const initialNotifications: Notification[] = [
-  { id: "1", title: "Overdue Alert", message: "Dune is overdue by Robert Smith.", time: "2h ago", type: "error", read: false },
-  { id: "2", title: "New Member", message: "Elena Rodriguez has joined the library.", time: "1d ago", type: "success", read: true },
+const initialAuditLogs: AuditEvent[] = [
+  { id: "A-001", timestamp: "Oct 20, 2026 10:45 AM", action: "BORROW", details: "Alice Johnson borrowed The Great Gatsby", user: "admin_jane", type: "info" },
+  { id: "A-002", timestamp: "Oct 19, 2026 02:15 PM", action: "MEMBER_REG", details: "New member Elena Rodriguez registered", user: "admin_jane", type: "success" },
+  { id: "A-003", timestamp: "Oct 18, 2026 09:00 AM", action: "ASSET_ADD", details: "Zero to One published to archive", user: "admin_jane", type: "success" },
 ];
 
 export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [books, setBooks] = useState<Book[]>(initialBooks);
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditEvent[]>(initialAuditLogs);
+
+  const addAudit = (action: string, details: string, type: AuditEvent['type'] = 'info') => {
+    const newLog: AuditEvent = {
+      id: `A-${Math.floor(Math.random() * 9000 + 1000)}`,
+      timestamp: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      action,
+      details,
+      user: "admin_jane",
+      type
+    };
+    setAuditLogs(prev => [newLog, ...prev]);
+  };
 
   const addBook = (book: Omit<Book, 'id'>) => {
     const newBook = { ...book, id: Math.random().toString(36).substr(2, 9) };
     setBooks(prev => [...prev, newBook]);
     addNotification("Asset Added", `${book.title} published to archive`, "success");
+    addAudit("ASSET_ADD", `${book.title} added to catalog`, "success");
     toast({ title: "Success", description: "Book added to catalog." });
   };
 
   const updateBook = (id: string, updatedFields: Partial<Book>) => {
     setBooks(prev => prev.map(b => b.id === id ? { ...b, ...updatedFields } : b));
+    addAudit("ASSET_UPDATE", `Updated record for ID: ${id}`);
     toast({ title: "Updated", description: "Record synchronized successfully." });
   };
 
   const deleteBook = (id: string) => {
     setBooks(prev => prev.filter(b => b.id !== id));
+    addAudit("ASSET_DELETE", `Removed asset ID: ${id}`, "warning");
     toast({ title: "Archived", description: "Entry removed from directory." });
   };
 
@@ -92,16 +110,19 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newMember = { ...member, id: Math.random().toString(36).substr(2, 9) };
     setMembers(prev => [...prev, newMember]);
     addNotification("New Registration", `${member.name} linked to system`, "success");
+    addAudit("MEMBER_REG", `${member.name} registered as new member`, "success");
     toast({ title: "Registered", description: "New member profile initialized." });
   };
 
   const updateMember = (id: string, updatedFields: Partial<Member>) => {
     setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updatedFields } : m));
+    addAudit("MEMBER_UPDATE", `Updated profile for ID: ${id}`);
     toast({ title: "Updated", description: "Profile data updated." });
   };
 
   const deleteMember = (id: string) => {
     setMembers(prev => prev.filter(m => m.id !== id));
+    addAudit("MEMBER_DELETE", `Deactivated member ID: ${id}`, "warning");
     toast({ title: "Deactivated", description: "Member link terminated." });
   };
 
@@ -123,14 +144,15 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setTransactions(prev => [newTx, ...prev]);
     updateBook(bookId, { availableCopies: book.availableCopies - 1, status: book.availableCopies <= 1 ? "Borrowed" : "Available" });
-    updateMember(memberId, { borrows: member.borrows + 1 });
+    updateMember(memberId, { borrows: (member.borrows || 0) + 1 });
     addNotification("Transmission", `${member.name} acquired ${book.title}`, "info");
+    addAudit("BORROW", `${member.name} borrowed ${book.title}`, "info");
     toast({ title: "Dispatched", description: "Asset transmission confirmed." });
   };
 
   const returnBook = (transactionId: string) => {
     const tx = transactions.find(t => t.id === transactionId);
-    if (!tx) return;
+    if (!tx || tx.status === 'Returned') return;
 
     setTransactions(prev => prev.map(t => t.id === transactionId ? { ...t, status: "Returned", returnDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) } : t));
     const book = books.find(b => b.id === tx.bookId);
@@ -138,6 +160,7 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateBook(book.id, { availableCopies: book.availableCopies + 1, status: "Available" });
     }
     addNotification("Returned", `${tx.bookTitle} reintegrated into archive`, "success");
+    addAudit("RETURN", `${tx.memberName} returned ${tx.bookTitle}`, "success");
     toast({ title: "Processed", description: "Asset return confirmed." });
   };
 
@@ -150,7 +173,14 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       return t;
     }));
+    addAudit("LOAN_EXTEND", `Extended loan for transaction: ${transactionId}`);
     toast({ title: "Extended", description: "Loan duration updated." });
+  };
+
+  const voidTransaction = (id: string) => {
+    setTransactions(prev => prev.filter(t => t.id !== id));
+    addAudit("VOID_TX", `Voided transaction: ${id}`, "warning");
+    toast({ title: "Voided", description: "Transaction removed from system history." });
   };
 
   const addNotification = (title: string, message: string, type: Notification['type']) => {
@@ -184,10 +214,10 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <LibraContext.Provider value={{
-      books, members, transactions, notifications,
+      books, members, transactions, notifications, auditLogs,
       addBook, updateBook, deleteBook, duplicateBook,
       addMember, updateMember, deleteMember,
-      borrowBook, returnBook, extendLoan,
+      borrowBook, returnBook, extendLoan, voidTransaction,
       markNotificationAsRead, clearNotifications,
       searchAll
     }}>

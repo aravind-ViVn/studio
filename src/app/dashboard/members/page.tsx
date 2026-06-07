@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useLibra } from "@/context/libra-context"
+import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Search, UserPlus, MoreHorizontal, Mail, Phone, Calendar, BookOpen, Trash2, Edit2, ChevronRight } from "lucide-react"
+import { Search, UserPlus, MoreHorizontal, Mail, Phone, Calendar, BookOpen, Trash2, Edit2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,9 +29,35 @@ import { cn } from "@/lib/utils"
 
 export default function MembersPage() {
   const { members, addMember, updateMember, deleteMember } = useLibra()
+  const router = useRouter()
   const [search, setSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<any>(null)
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    status: "Active" as const
+  })
+
+  useEffect(() => {
+    if (editingMember) {
+      setFormData({
+        name: editingMember.name,
+        email: editingMember.email,
+        phone: editingMember.phone,
+        status: editingMember.status
+      })
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        status: "Active"
+      })
+    }
+  }, [editingMember, isModalOpen])
 
   const filteredMembers = members.filter(m => 
     m.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -46,25 +73,6 @@ export default function MembersPage() {
     setEditingMember(member)
     setIsModalOpen(true)
   }
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    status: "Active" as const
-  })
-
-  // Sync form data when editing changes
-  useState(() => {
-    if (editingMember) {
-      setFormData({
-        name: editingMember.name,
-        email: editingMember.email,
-        phone: editingMember.phone,
-        status: editingMember.status
-      })
-    }
-  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -159,7 +167,7 @@ export default function MembersPage() {
               </div>
 
               <div className="mt-8 flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                <Button variant="outline" className="flex-1 rounded-xl bg-white/5 border-white/5 font-bold hover:bg-white/10 text-xs tracking-widest">VIEW PROFILE</Button>
+                <Button onClick={() => router.push(`/dashboard/members/${member.id}`)} variant="outline" className="flex-1 rounded-xl bg-white/5 border-white/5 font-bold hover:bg-white/10 text-xs tracking-widest">VIEW PROFILE</Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="h-10 w-10 rounded-xl bg-white/5 border-white/5 p-0 hover:bg-white/10">

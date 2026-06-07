@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLibra } from "@/context/libra-context"
+import { useRouter } from "next/navigation"
 import { 
   Table, 
   TableBody, 
@@ -20,11 +21,8 @@ import {
   AlertTriangle, 
   Zap,
   Search,
-  User,
-  Book,
   Calendar,
   ChevronRight,
-  MoreVertical,
   History,
   Trash2
 } from "lucide-react"
@@ -39,18 +37,14 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 export default function TransactionsPage() {
-  const { transactions, books, members, borrowBook, returnBook, extendLoan } = useLibra()
+  const { transactions, books, members, borrowBook, returnBook, extendLoan, voidTransaction } = useLibra()
+  const router = useRouter()
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [isVoidModalOpen, setIsVoidModalOpen] = useState(false)
   const [selectedTx, setSelectedTx] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState("")
 
@@ -72,6 +66,14 @@ export default function TransactionsPage() {
     setIsDetailsModalOpen(true)
   }
 
+  const handleVoid = () => {
+    if (selectedTx) {
+      voidTransaction(selectedTx.id)
+      setIsVoidModalOpen(false)
+      setIsDetailsModalOpen(false)
+    }
+  }
+
   const filteredTransactions = transactions.filter(tx => 
     tx.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tx.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -90,7 +92,7 @@ export default function TransactionsPage() {
           <p className="text-white/50 text-lg mt-1 font-medium">Tracking the kinetic flow of all knowledge assets.</p>
         </div>
         <div className="flex gap-4">
-          <Button variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-14 px-8 font-bold text-white hover:bg-emerald-500/10 transition-all">
+          <Button onClick={() => router.push('/dashboard/transactions/audit')} variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-14 px-8 font-bold text-white hover:bg-emerald-500/10 transition-all">
             <History className="w-5 h-5 mr-2" /> AUDIT LOG
           </Button>
           <Button onClick={() => setIsBorrowModalOpen(true)} className="gradient-primary rounded-2xl h-14 px-8 font-bold shadow-lg hover:scale-[1.02] transition-transform">
@@ -228,10 +230,27 @@ export default function TransactionsPage() {
                   </Button>
                 </>
               )}
-              <Button variant="ghost" className="w-full h-12 rounded-xl text-rose-400 hover:bg-rose-400/10 font-bold">
+              <Button onClick={() => setIsVoidModalOpen(true)} variant="ghost" className="w-full h-12 rounded-xl text-rose-400 hover:bg-rose-400/10 font-bold">
                 <Trash2 className="w-4 h-4 mr-2" /> VOID TRANSACTION
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Void Confirmation Modal */}
+      <Dialog open={isVoidModalOpen} onOpenChange={setIsVoidModalOpen}>
+        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[400px] p-10 text-center space-y-6 shadow-2xl">
+          <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto text-rose-500">
+            <Trash2 className="w-10 h-10" />
+          </div>
+          <div className="space-y-2">
+            <DialogTitle className="text-2xl font-bold font-headline text-white">Void Transaction?</DialogTitle>
+            <DialogDescription className="text-white/40">This action will permanently remove the record for {selectedTx?.id}. This cannot be undone.</DialogDescription>
+          </div>
+          <div className="flex gap-4 pt-4">
+            <Button onClick={() => setIsVoidModalOpen(false)} variant="ghost" className="flex-1 h-12 rounded-xl text-white/40">CANCEL</Button>
+            <Button onClick={handleVoid} className="flex-1 h-12 rounded-xl bg-rose-500 hover:bg-rose-600 font-bold">CONFIRM VOID</Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -18,15 +18,16 @@ import {
   Search, 
   Plus, 
   MoreHorizontal, 
-  Filter,
-  ArrowUpDown,
-  Book as BookIcon,
   Download,
+  Book as BookIcon,
   Edit2,
   Trash2,
-  ChevronRight,
   Copy,
-  Eye
+  Eye,
+  ArrowUpDown,
+  CheckCircle2,
+  FileText,
+  FileSpreadsheet
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -36,9 +37,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog"
 import { BookModal } from "@/components/modals/book-modal"
 import { Book } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { toast } from "@/hooks/use-toast"
 
 export default function CatalogPage() {
   const { books, deleteBook, duplicateBook } = useLibra()
@@ -46,6 +56,7 @@ export default function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false)
   const [editingBook, setEditingBook] = useState<Book | undefined>(undefined)
 
   const filteredBooks = books.filter(book => {
@@ -73,6 +84,14 @@ export default function CatalogPage() {
     router.push(`/dashboard/books/${id}`)
   }
 
+  const handleExport = (type: string) => {
+    toast({
+      title: "Export Initiated",
+      description: `Ledger being processed as ${type}. Download will start shortly.`,
+    })
+    setIsExportModalOpen(false)
+  }
+
   const categories = ["Fiction", "Non-Fiction", "Sci-Fi", "Classic", "History", "Technology", "Business"]
 
   return (
@@ -83,7 +102,7 @@ export default function CatalogPage() {
           <p className="text-white/50 text-lg mt-1 font-medium">Browse and manage the complete LibraFlow collection.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-12 px-6 font-bold text-white hover:bg-white/10">
+          <Button onClick={() => setIsExportModalOpen(true)} variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-12 px-6 font-bold text-white hover:bg-white/10">
             <Download className="w-4 h-4 mr-2" /> EXPORT LEDGER
           </Button>
           <Button onClick={handleAddNew} className="gradient-primary rounded-2xl h-12 px-6 font-bold shadow-lg hover:scale-[1.02] transition-transform">
@@ -237,6 +256,45 @@ export default function CatalogPage() {
           </Button>
         </div>
       )}
+
+      {/* Export Modal */}
+      <Dialog open={isExportModalOpen} onOpenChange={setIsExportModalOpen}>
+        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[450px] p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-8 bg-white/5 border-b border-white/5">
+            <DialogTitle className="text-3xl font-bold font-headline text-white tracking-tight">Export Ledger</DialogTitle>
+            <DialogDescription className="text-white/40">Select your preferred format for the inventory report.</DialogDescription>
+          </DialogHeader>
+          <div className="p-8 grid grid-cols-1 gap-4">
+            <Button onClick={() => handleExport('PDF')} variant="ghost" className="h-20 justify-start gap-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary transition-all group">
+              <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-lg group-hover:bg-white">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-white">Portable Document Format</p>
+                <p className="text-xs text-white/40 uppercase tracking-widest font-bold">.PDF Archive</p>
+              </div>
+            </Button>
+            <Button onClick={() => handleExport('CSV')} variant="ghost" className="h-20 justify-start gap-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary transition-all group">
+              <div className="w-12 h-12 rounded-xl gradient-secondary flex items-center justify-center shadow-lg">
+                <FileSpreadsheet className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-white">Comma Separated Values</p>
+                <p className="text-xs text-white/40 uppercase tracking-widest font-bold">.CSV Ledger</p>
+              </div>
+            </Button>
+            <Button onClick={() => handleExport('Excel')} variant="ghost" className="h-20 justify-start gap-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary transition-all group">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
+                <FileSpreadsheet className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-white">Microsoft Excel</p>
+                <p className="text-xs text-white/40 uppercase tracking-widest font-bold">.XLSX Sheet</p>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BookModal 
         isOpen={isModalOpen} 

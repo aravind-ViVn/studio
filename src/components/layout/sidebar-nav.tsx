@@ -8,8 +8,7 @@ import {
   BookOpen, 
   Users, 
   ArrowLeftRight, 
-  FileText, 
-  Sparkles,
+  BarChart3, 
   Settings,
   LogOut,
   ChevronRight,
@@ -23,8 +22,7 @@ const navItems = [
   { name: "Catalog", href: "/dashboard/books", icon: BookOpen },
   { name: "Members", href: "/dashboard/members", icon: Users },
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
-  { name: "AI Discovery", href: "/dashboard/discovery", icon: Sparkles },
-  { name: "Reports", href: "/dashboard/reports", icon: FileText },
+  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
@@ -63,7 +61,7 @@ export function SidebarNav() {
           <Input 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="System Search..." 
+            placeholder="Catalog Search..." 
             className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50"
           />
         </form>

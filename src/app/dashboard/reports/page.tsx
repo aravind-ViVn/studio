@@ -9,19 +9,20 @@ import {
   TrendingUp, 
   BarChart2, 
   AlertCircle,
-  Layers
+  Layers,
+  ChevronRight
 } from "lucide-react"
 import {
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Tooltip,
+  Cell,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Cell,
-  PieChart,
-  Pie
+  CartesianGrid
 } from "recharts"
 import { cn } from "@/lib/utils"
 
@@ -36,8 +37,8 @@ const categoryData = [
 const reportTypes = [
   { id: 'audit', title: "Inventory Audit", description: "Complete collection valuation and health report.", icon: BarChart2, color: "text-primary", bg: "bg-primary/10" },
   { id: 'growth', title: "Member Growth", description: "Acquisition and retention metrics over 12 months.", icon: TrendingUp, color: "text-secondary", bg: "bg-secondary/10" },
-  { id: 'velocity', title: "Lending Velocity", description: "Average duration and turnover for popular genres.", icon: Layers, color: "text-accent", bg: "bg-accent/10" },
-  { id: 'loss', title: "Asset Loss", description: "Detailed summary of damaged or unreturned items.", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10" },
+  { id: 'velocity', title: "Lending Flux", description: "Average duration and turnover for popular genres.", icon: Layers, color: "text-accent", bg: "bg-accent/10" },
+  { id: 'loss', title: "Asset Loss Log", description: "Detailed summary of damaged or unreturned items.", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10" },
 ]
 
 export default function ReportsPage() {
@@ -47,8 +48,8 @@ export default function ReportsPage() {
     <div className="space-y-10 animate-in-up">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-bold font-headline text-white tracking-tight">Intelligence</h1>
-          <p className="text-white/50 text-lg mt-1 font-medium">Deep-dive analytics and performance reporting.</p>
+          <h1 className="text-4xl font-bold font-headline text-white tracking-tight">Analytics & Reports</h1>
+          <p className="text-white/50 text-lg mt-1 font-medium">Deep-dive intelligence and performance reporting.</p>
         </div>
         <div className="p-1 bg-white/5 border border-white/5 rounded-2xl flex">
           <Button variant="ghost" size="sm" className="rounded-xl px-4 font-bold text-white text-xs bg-white/10">MONTHLY</Button>

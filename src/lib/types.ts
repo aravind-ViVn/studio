@@ -45,3 +45,12 @@ export interface Notification {
   type: 'info' | 'success' | 'warning' | 'error';
   read: boolean;
 }
+
+export interface AuditEvent {
+  id: string;
+  timestamp: string;
+  action: string;
+  details: string;
+  user: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+}
