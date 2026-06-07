@@ -4,7 +4,7 @@ import { useLibra } from "@/context/libra-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, History, Filter, Download, User, Info, AlertTriangle, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, History, Filter, Download, User, Info, AlertTriangle, CheckCircle2, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function AuditLogPage() {
