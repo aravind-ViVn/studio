@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useState } from "react"
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -11,9 +12,11 @@ import {
   Sparkles,
   Settings,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Search
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -27,10 +30,20 @@ const navItems = [
 
 export function SidebarNav() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/dashboard/search?q=${encodeURIComponent(searchQuery)}`)
+      setSearchQuery("")
+    }
+  }
 
   return (
     <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in shrink-0">
-      <div className="mb-10 px-4">
+      <div className="mb-8 px-4">
         <div className="flex items-center gap-3">
           <div className="p-2 gradient-primary rounded-xl">
             <BookOpen className="w-6 h-6 text-white" />
@@ -42,6 +55,18 @@ export function SidebarNav() {
             <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold">Admin OS v4</p>
           </div>
         </div>
+      </div>
+
+      <div className="px-2 mb-6">
+        <form onSubmit={handleSearch} className="relative group">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
+          <Input 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="System Search..." 
+            className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50"
+          />
+        </form>
       </div>
 
       <nav className="flex-1 space-y-2 px-2 overflow-y-auto no-scrollbar">

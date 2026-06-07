@@ -2,36 +2,34 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 import { 
   BookOpen, 
   Users, 
   Clock, 
   AlertCircle, 
   TrendingUp, 
-  Calendar, 
   Plus, 
   ArrowRight,
   ArrowUpRight,
   Activity
 } from "lucide-react"
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
   AreaChart,
-  Area,
-  Cell
+  Area
 } from "recharts"
+import { cn } from "@/lib/utils"
 
 const stats = [
-  { label: "Total Books", value: "12,482", icon: BookOpen, gradient: "gradient-primary", trend: "+4.5%" },
-  { label: "Active Members", value: "1,240", icon: Users, gradient: "gradient-secondary", trend: "+12%" },
-  { label: "Borrowed Today", value: "384", icon: Clock, gradient: "bg-orange-500", trend: "+2%" },
-  { label: "Pending Alerts", value: "24", icon: AlertCircle, gradient: "bg-rose-500", trend: "-5%" },
+  { label: "Total Books", value: "12,482", icon: BookOpen, gradient: "gradient-primary", trend: "+4.5%", href: "/dashboard/books" },
+  { label: "Active Members", value: "1,240", icon: Users, gradient: "gradient-secondary", trend: "+12%", href: "/dashboard/members" },
+  { label: "Borrowed Today", value: "384", icon: Clock, gradient: "bg-orange-500", trend: "+2%", href: "/dashboard/transactions" },
+  { label: "Pending Alerts", value: "24", icon: AlertCircle, gradient: "bg-rose-500", trend: "-5%", href: "/dashboard/transactions" },
 ]
 
 const borrowingData = [
@@ -50,6 +48,8 @@ const activities = [
 ]
 
 export default function Dashboard() {
+  const router = useRouter()
+
   return (
     <div className="space-y-10 animate-in-up">
       {/* Hero Header */}
@@ -67,7 +67,7 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-4">
-            <Button size="lg" className="rounded-2xl h-14 px-8 gradient-primary font-bold shadow-lg hover:scale-[1.02] transition-transform">
+            <Button size="lg" onClick={() => router.push('/dashboard/transactions')} className="rounded-2xl h-14 px-8 gradient-primary font-bold shadow-lg hover:scale-[1.02] transition-transform">
               <Plus className="w-5 h-5 mr-2" /> NEW TRANSACTION
             </Button>
           </div>
@@ -77,7 +77,11 @@ export default function Dashboard() {
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <Card key={i} className="glass-card border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+          <Card 
+            key={i} 
+            onClick={() => router.push(stat.href)}
+            className="glass-card border-none rounded-[28px] overflow-hidden group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+          >
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-6">
                 <div className={cn("p-4 rounded-2xl shadow-lg", stat.gradient)}>
@@ -108,7 +112,7 @@ export default function Dashboard() {
                 <CardTitle className="text-2xl font-headline font-bold text-white">Engagement Flow</CardTitle>
                 <p className="text-sm text-white/40 font-medium">Monthly lending trends over time</p>
               </div>
-              <Button variant="outline" size="sm" className="bg-white/5 border-white/10 rounded-xl text-xs font-bold">
+              <Button onClick={() => router.push('/dashboard/reports')} variant="outline" size="sm" className="bg-white/5 border-white/10 rounded-xl text-xs font-bold">
                 VIEW FULL REPORT <ArrowUpRight className="ml-2 w-3 h-3" />
               </Button>
             </div>
@@ -174,7 +178,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-            <Button variant="ghost" className="w-full text-xs font-bold tracking-widest text-primary hover:bg-primary/10 rounded-xl mt-4">
+            <Button onClick={() => router.push('/dashboard/transactions')} variant="ghost" className="w-full text-xs font-bold tracking-widest text-primary hover:bg-primary/10 rounded-xl mt-4">
               SEE ALL ACTIVITY <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </CardContent>
@@ -182,8 +186,4 @@ export default function Dashboard() {
       </div>
     </div>
   )
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ')
 }

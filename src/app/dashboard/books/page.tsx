@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLibra } from "@/context/libra-context"
+import { useRouter } from "next/navigation"
 import { 
   Table, 
   TableBody, 
@@ -23,7 +24,9 @@ import {
   Download,
   Edit2,
   Trash2,
-  ChevronRight
+  ChevronRight,
+  Copy,
+  Eye
 } from "lucide-react"
 import {
   DropdownMenu,
@@ -38,7 +41,8 @@ import { Book } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 export default function CatalogPage() {
-  const { books, deleteBook } = useLibra()
+  const { books, deleteBook, duplicateBook } = useLibra()
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -65,21 +69,25 @@ export default function CatalogPage() {
     setIsModalOpen(true)
   }
 
-  const categories = ["Fiction", "Classic", "Sci-Fi", "Non-Fiction", "Fantasy", "History"]
+  const handleViewDetails = (id: string) => {
+    router.push(`/dashboard/books/${id}`)
+  }
+
+  const categories = ["Fiction", "Non-Fiction", "Sci-Fi", "Classic", "History", "Technology", "Business"]
 
   return (
     <div className="space-y-10 animate-in-up">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-bold font-headline text-white tracking-tight">Inventory</h1>
+          <h1 className="text-4xl font-bold font-headline text-white tracking-tight">Catalog Archive</h1>
           <p className="text-white/50 text-lg mt-1 font-medium">Browse and manage the complete LibraFlow collection.</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-12 px-6 font-bold text-white hover:bg-white/10">
-            <Download className="w-4 h-4 mr-2" /> EXPORT PDF
+            <Download className="w-4 h-4 mr-2" /> EXPORT LEDGER
           </Button>
           <Button onClick={handleAddNew} className="gradient-primary rounded-2xl h-12 px-6 font-bold shadow-lg hover:scale-[1.02] transition-transform">
-            <Plus className="w-4 h-4 mr-2" /> ADD NEW BOOK
+            <Plus className="w-4 h-4 mr-2" /> PUBLISH ASSET
           </Button>
         </div>
       </div>
@@ -95,10 +103,21 @@ export default function CatalogPage() {
           />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 w-full lg:w-auto no-scrollbar">
+          <Badge 
+            onClick={() => setActiveCategory(null)}
+            className={cn(
+              "h-14 px-6 rounded-xl cursor-pointer transition-all border border-white/5 shrink-0 uppercase tracking-widest font-bold text-[10px]",
+              activeCategory === null 
+                ? "bg-primary text-white border-primary" 
+                : "bg-white/5 text-white/60 hover:bg-white/10"
+            )}
+          >
+            ALL ASSETS
+          </Badge>
           {categories.map(cat => (
             <Badge 
               key={cat}
-              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              onClick={() => setActiveCategory(cat)}
               className={cn(
                 "h-14 px-6 rounded-xl cursor-pointer transition-all border border-white/5 shrink-0 uppercase tracking-widest font-bold text-[10px]",
                 activeCategory === cat 
@@ -109,9 +128,6 @@ export default function CatalogPage() {
               {cat}
             </Badge>
           ))}
-          <Button variant="outline" className="h-14 w-14 bg-white/5 border-white/5 rounded-xl p-0 hover:bg-white/10 shrink-0">
-            <Filter className="w-5 h-5 text-white/40" />
-          </Button>
         </div>
       </div>
 
@@ -128,7 +144,7 @@ export default function CatalogPage() {
                 <TableHead className="text-white/40 font-bold uppercase tracking-widest text-[10px]">Category</TableHead>
                 <TableHead className="text-white/40 font-bold uppercase tracking-widest text-[10px]">Status</TableHead>
                 <TableHead className="text-white/40 font-bold uppercase tracking-widest text-[10px]">Stock</TableHead>
-                <TableHead className="text-right text-white/40 font-bold uppercase tracking-widest text-[10px] px-8">Options</TableHead>
+                <TableHead className="text-right text-white/40 font-bold uppercase tracking-widest text-[10px] px-8">Operations</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -140,7 +156,7 @@ export default function CatalogPage() {
                         <BookIcon className="w-6 h-6 text-white/20 group-hover:text-primary/40" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-white text-lg tracking-tight group-hover:text-primary transition-colors">{book.title}</span>
+                        <span className="font-bold text-white text-lg tracking-tight group-hover:text-primary transition-colors cursor-pointer" onClick={() => handleViewDetails(book.id)}>{book.title}</span>
                         <span className="text-sm text-white/40 font-medium">by {book.author}</span>
                       </div>
                     </div>
@@ -167,12 +183,11 @@ export default function CatalogPage() {
                   <TableCell>
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-[10px] font-bold text-white/40 uppercase tracking-tighter">
-                        <span>Available</span>
                         <span>{book.availableCopies}/{book.totalCopies}</span>
                       </div>
-                      <div className="w-32 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
                         <div 
-                          className="h-full gradient-primary transition-all duration-500" 
+                          className={cn("h-full transition-all duration-500", (book.availableCopies / book.totalCopies) < 0.3 ? "bg-rose-500" : "gradient-primary")} 
                           style={{ width: `${(book.availableCopies / book.totalCopies) * 100}%` }}
                         />
                       </div>
@@ -187,11 +202,14 @@ export default function CatalogPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="glass-card border-white/10 rounded-2xl p-2 min-w-[200px] shadow-2xl">
                         <DropdownMenuLabel className="text-white/40 text-[10px] uppercase font-bold tracking-widest p-2">Operations</DropdownMenuLabel>
-                        <DropdownMenuItem className="rounded-xl p-3 font-bold hover:bg-white/10 cursor-pointer flex items-center justify-between">
-                          View Details <ChevronRight className="w-4 h-4 opacity-30" />
+                        <DropdownMenuItem onClick={() => handleViewDetails(book.id)} className="rounded-xl p-3 font-bold hover:bg-white/10 cursor-pointer flex items-center justify-between">
+                          View Details <Eye className="w-4 h-4 opacity-30" />
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleEdit(book)} className="rounded-xl p-3 font-bold hover:bg-white/10 cursor-pointer flex items-center justify-between">
                           Edit Record <Edit2 className="w-4 h-4 opacity-30" />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => duplicateBook(book.id)} className="rounded-xl p-3 font-bold hover:bg-white/10 cursor-pointer flex items-center justify-between">
+                          Duplicate Entry <Copy className="w-4 h-4 opacity-30" />
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-white/5" />
                         <DropdownMenuItem onClick={() => deleteBook(book.id)} className="rounded-xl p-3 font-bold text-rose-400 hover:bg-rose-400/10 cursor-pointer flex items-center justify-between">

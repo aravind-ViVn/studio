@@ -2,16 +2,13 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 import { 
   FileText, 
   Download, 
-  PieChart as PieChartIcon, 
-  Calendar, 
+  TrendingUp, 
+  BarChart2, 
   AlertCircle,
-  TrendingUp,
-  BarChart2,
-  ArrowUpRight,
-  TrendingDown,
   Layers
 } from "lucide-react"
 import {
@@ -26,6 +23,7 @@ import {
   PieChart,
   Pie
 } from "recharts"
+import { cn } from "@/lib/utils"
 
 const categoryData = [
   { name: "Fiction", value: 400, color: "#7C3AED" },
@@ -36,13 +34,15 @@ const categoryData = [
 ]
 
 const reportTypes = [
-  { title: "Inventory Audit", description: "Complete collection valuation and health report.", icon: BarChart2, color: "text-primary", bg: "bg-primary/10" },
-  { title: "Member Growth", description: "Acquisition and retention metrics over 12 months.", icon: TrendingUp, color: "text-secondary", bg: "bg-secondary/10" },
-  { title: "Lending Velocity", description: "Average duration and turnover for popular genres.", icon: Layers, color: "text-accent", bg: "bg-accent/10" },
-  { title: "Asset Loss", description: "Detailed summary of damaged or unreturned items.", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10" },
+  { id: 'audit', title: "Inventory Audit", description: "Complete collection valuation and health report.", icon: BarChart2, color: "text-primary", bg: "bg-primary/10" },
+  { id: 'growth', title: "Member Growth", description: "Acquisition and retention metrics over 12 months.", icon: TrendingUp, color: "text-secondary", bg: "bg-secondary/10" },
+  { id: 'velocity', title: "Lending Velocity", description: "Average duration and turnover for popular genres.", icon: Layers, color: "text-accent", bg: "bg-accent/10" },
+  { id: 'loss', title: "Asset Loss", description: "Detailed summary of damaged or unreturned items.", icon: AlertCircle, color: "text-rose-500", bg: "bg-rose-500/10" },
 ]
 
 export default function ReportsPage() {
+  const router = useRouter()
+
   return (
     <div className="space-y-10 animate-in-up">
       <div className="flex justify-between items-end">
@@ -133,7 +133,7 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {reportTypes.map((report, i) => (
-          <Card key={i} className="glass-card border-none rounded-[32px] overflow-hidden group hover:scale-[1.02] transition-all duration-500">
+          <Card key={i} onClick={() => router.push(`/dashboard/reports/${report.id}`)} className="glass-card border-none rounded-[32px] overflow-hidden group hover:scale-[1.02] transition-all duration-500 cursor-pointer">
             <div className="h-1 gradient-primary opacity-0 group-hover:opacity-100 transition-opacity" />
             <CardHeader className="p-6">
               <div className={cn("w-12 h-12 rounded-[18px] flex items-center justify-center mb-4 shadow-lg transition-transform group-hover:rotate-12", report.bg)}>
@@ -144,7 +144,7 @@ export default function ReportsPage() {
             </CardHeader>
             <CardContent className="px-6 pb-6 pt-2">
               <Button size="sm" className="w-full bg-white/5 border border-white/5 rounded-xl font-bold tracking-widest text-[10px] hover:bg-primary transition-all">
-                GENERATE INSTANCE
+                DRILL DOWN
               </Button>
             </CardContent>
           </Card>
@@ -176,8 +176,4 @@ export default function ReportsPage() {
       </Card>
     </div>
   )
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ')
 }
