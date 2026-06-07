@@ -8,7 +8,6 @@ import {
   BookOpen, 
   Users, 
   ArrowLeftRight, 
-  BarChart3, 
   Settings,
   LogOut,
   ChevronRight,
@@ -135,7 +134,6 @@ const NAV_ITEMS = [
   { name: "Catalog", href: "/dashboard/books", icon: BookOpen, roles: ["Super Admin", "Librarian"] },
   { name: "Members", href: "/dashboard/members", icon: Users, roles: ["Super Admin", "Librarian"] },
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight, roles: ["Super Admin", "Librarian"] },
-  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3, roles: ["Super Admin"] },
   { name: "User Management", href: "/dashboard/users", icon: ShieldAlert, roles: ["Super Admin"] },
   { name: "Settings", href: "/dashboard/settings", icon: Settings, roles: ["Super Admin"] },
 ]

@@ -23,7 +23,8 @@ import {
   Search,
   ChevronRight,
   Trash2,
-  Download
+  Download,
+  History
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { 
@@ -96,11 +97,11 @@ export default function TransactionsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl lg:text-4xl font-bold font-headline text-white tracking-tight">Operations Ledger</h1>
-          <p className="text-white/50 text-base lg:text-lg mt-1 font-medium font-body">Tracking the flow of knowledge assets.</p>
+          <p className="text-white/50 text-base lg:text-lg mt-1 font-medium font-body">Tracking the flow of library assets.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <Button onClick={handleExport} variant="outline" className="w-full sm:w-auto bg-white/5 border-white/10 rounded-2xl h-14 px-8 font-bold text-white hover:bg-white/10 transition-all">
-            <Download className="w-5 h-5 mr-2" /> EXPORT
+            <Download className="w-5 h-5 mr-2" /> EXPORT RECORDS
           </Button>
           <Button onClick={() => setIsBorrowModalOpen(true)} className="w-full sm:w-auto gradient-primary rounded-2xl h-14 px-8 font-bold shadow-lg hover:scale-[1.02] transition-transform">
             <ArrowLeftRight className="w-5 h-5 mr-2" /> DISPATCH ASSET
@@ -111,7 +112,7 @@ export default function TransactionsPage() {
       <div className="relative glass-card p-2 rounded-[28px] max-w-2xl w-full">
         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
         <Input 
-          placeholder="Filter by asset, consignee or ID..." 
+          placeholder="Filter by asset, member or transaction ID..." 
           className="pl-14 h-14 bg-transparent border-none text-base lg:text-lg placeholder:text-white/20 text-white w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -122,8 +123,10 @@ export default function TransactionsPage() {
         <TabsList className="bg-white/5 border border-white/5 p-1 lg:p-2 rounded-[20px] lg:rounded-[24px] mb-6 lg:mb-8 h-14 lg:h-16 flex overflow-x-auto no-scrollbar scroll-smooth w-full">
           <TabsTrigger value="all" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-white/10 data-[state=active]:text-white h-full transition-all shrink-0 text-[10px] lg:text-sm">ALL FLOWS</TabsTrigger>
           <TabsTrigger value="active" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-white/10 data-[state=active]:text-white h-full transition-all shrink-0 text-[10px] lg:text-sm">ACTIVE</TabsTrigger>
-          <TabsTrigger value="overdue" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400 h-full transition-all shrink-0 text-[10px] lg:text-sm">CRITICAL</TabsTrigger>
-          <TabsTrigger value="history" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-white/10 data-[state=active]:text-white h-full transition-all shrink-0 text-[10px] lg:text-sm">ARCHIVE</TabsTrigger>
+          <TabsTrigger value="overdue" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400 h-full transition-all shrink-0 text-[10px] lg:text-sm">OVERDUE</TabsTrigger>
+          <TabsTrigger value="history" className="flex-1 rounded-xl lg:rounded-2xl px-4 lg:px-8 font-bold data-[state=active]:bg-white/10 data-[state=active]:text-white h-full transition-all shrink-0 text-[10px] lg:text-sm">
+            <History className="w-3 h-3 mr-2 hidden sm:inline" /> HISTORY
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-0">
@@ -145,7 +148,7 @@ export default function TransactionsPage() {
         <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[500px] p-0 overflow-hidden shadow-2xl m-4">
           <DialogHeader className="p-6 lg:p-8 bg-white/5 border-b border-white/5">
             <DialogTitle className="text-2xl lg:text-3xl font-bold font-headline text-white tracking-tight">Dispatch Asset</DialogTitle>
-            <DialogDescription className="text-white/40">Assign an asset to a member.</DialogDescription>
+            <DialogDescription className="text-white/40">Assign a library asset to a member.</DialogDescription>
           </DialogHeader>
           <div className="p-6 lg:p-8 space-y-6">
             <div className="space-y-2">
@@ -187,7 +190,7 @@ export default function TransactionsPage() {
           <DialogFooter className="p-6 lg:p-8 pt-0 gap-3 flex-col sm:flex-row">
             <Button variant="ghost" onClick={() => setIsBorrowModalOpen(false)} className="h-14 px-8 rounded-2xl text-white/40 hover:text-white w-full sm:w-auto">CANCEL</Button>
             <Button onClick={handleBorrow} disabled={!newBorrow.memberId || !newBorrow.bookId} className="h-14 px-10 rounded-2xl gradient-primary font-bold shadow-2xl hover:scale-[1.02] transition-all flex-1 w-full">
-              CONFIRM
+              CONFIRM DISPATCH
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -252,7 +255,7 @@ export default function TransactionsPage() {
           </div>
           <div className="space-y-2">
             <DialogTitle className="text-xl lg:text-2xl font-bold font-headline text-white">Void Transaction?</DialogTitle>
-            <DialogDescription className="text-white/40">This action will permanently remove the record.</DialogDescription>
+            <DialogDescription className="text-white/40">This action will permanently remove the record from system history.</DialogDescription>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button onClick={() => setIsVoidModalOpen(false)} variant="ghost" className="flex-1 h-12 rounded-xl text-white/40">CANCEL</Button>
@@ -273,7 +276,7 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
         </div>
         <div>
           <h3 className="text-xl lg:text-2xl font-bold font-headline text-white tracking-tight">No transmissions recorded</h3>
-          <p className="text-white/30 mt-2 font-medium max-w-sm mx-auto text-sm lg:text-base">The ledger is empty for this filter.</p>
+          <p className="text-white/30 mt-2 font-medium max-w-sm mx-auto text-sm lg:text-base">The ledger is empty for this criteria.</p>
         </div>
       </div>
     )
@@ -286,7 +289,7 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
         <Table>
           <TableHeader className="bg-white/5 border-b border-white/5">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="h-16 text-white/40 font-bold uppercase tracking-widest text-[10px] px-8">Ref</TableHead>
+              <TableHead className="h-16 text-white/40 font-bold uppercase tracking-widest text-[10px] px-8">Ref ID</TableHead>
               <TableHead className="h-16 text-white/40 font-bold uppercase tracking-widest text-[10px]">Asset & Consignee</TableHead>
               <TableHead className="h-16 text-white/40 font-bold uppercase tracking-widest text-[10px]">Timeline</TableHead>
               <TableHead className="h-16 text-white/40 font-bold uppercase tracking-widest text-[10px]">Status</TableHead>
@@ -337,7 +340,7 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
                         RETURN
                       </Button>
                     ) : (
-                      <Badge variant="ghost" className="bg-white/5 text-[10px] uppercase font-bold text-white/20 px-3 py-1.5 rounded-lg">ARCHIVED</Badge>
+                      <Badge variant="ghost" className="bg-white/5 text-[10px] uppercase font-bold text-white/20 px-3 py-1.5 rounded-lg">HISTORY</Badge>
                     )}
                     <Button onClick={() => onAction(tx)} variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10">
                       <ChevronRight className="w-5 h-5 text-white/30" />
