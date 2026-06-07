@@ -149,15 +149,15 @@ export default function SettingsPage() {
               </div>
               <div className="glass-card rounded-[32px] p-10 grid grid-cols-2 gap-8">
                 <div className="col-span-2 space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Registry Name</Badge>
+                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Registry Name</Label>
                   <Input defaultValue="Central Archive Nexus 01" className="h-14 bg-white/5 border-white/5 rounded-2xl text-white" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Physical Location</Badge>
+                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Physical Location</Label>
                   <Input defaultValue="Sub-Level 4, Science District" className="h-14 bg-white/5 border-white/5 rounded-2xl text-white" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Contact Terminal</Badge>
+                  <Label className="text-xs font-bold uppercase tracking-widest text-white/30 ml-1">Contact Terminal</Label>
                   <Input defaultValue="+1 (555) 900-FLOW" className="h-14 bg-white/5 border-white/5 rounded-2xl text-white" />
                 </div>
               </div>
