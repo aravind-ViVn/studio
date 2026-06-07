@@ -10,7 +10,8 @@ import {
   FileText, 
   Sparkles,
   Settings,
-  LogOut
+  LogOut,
+  ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -27,16 +28,22 @@ export function SidebarNav() {
   const pathname = usePathname()
 
   return (
-    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground w-64 border-r border-sidebar-border">
-      <div className="p-6">
-        <h2 className="text-2xl font-headline font-bold text-white tracking-tight flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-secondary" />
-          LibraFlow
-        </h2>
-        <p className="text-xs text-sidebar-foreground/60 mt-1 uppercase tracking-widest font-medium">Archive Management</p>
+    <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in">
+      <div className="mb-10 px-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 gradient-primary rounded-xl">
+            <BookOpen className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-headline font-bold text-white tracking-tight">
+              LibraFlow
+            </h2>
+            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold">Admin OS v4</p>
+          </div>
+        </div>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1 mt-4">
+      <nav className="flex-1 space-y-2 px-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
           return (
@@ -44,35 +51,42 @@ export function SidebarNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors",
+                "group flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300",
                 isActive 
-                  ? "bg-sidebar-accent text-white" 
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-white"
+                  ? "bg-white/10 text-white shadow-lg shadow-black/20" 
+                  : "text-white/60 hover:bg-white/5 hover:text-white"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-secondary" : "text-sidebar-foreground/40")} />
-              {item.name}
+              <div className="flex items-center gap-3">
+                <item.icon className={cn(
+                  "w-5 h-5 transition-colors",
+                  isActive ? "text-primary" : "text-white/30 group-hover:text-white/60"
+                )} />
+                {item.name}
+              </div>
+              {isActive && <ChevronRight className="w-4 h-4 text-primary animate-in fade-in" />}
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-4 border-t border-sidebar-border mt-auto">
-        <div className="flex items-center gap-3 px-4 py-3 text-sm text-sidebar-foreground/70 mb-4">
-          <div className="w-8 h-8 rounded-full bg-sidebar-accent flex items-center justify-center font-bold text-secondary">
-            A
+      <div className="mt-auto pt-6 border-t border-white/5 px-2">
+        <div className="p-4 rounded-[24px] bg-white/5 mb-6 flex items-center gap-3 border border-white/5">
+          <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg">
+            JD
           </div>
-          <div className="flex flex-col">
-            <span className="text-white font-medium">Admin User</span>
-            <span className="text-[10px] uppercase">Librarian</span>
+          <div className="flex flex-col min-w-0">
+            <span className="text-white font-bold text-sm truncate">Jane Doe</span>
+            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider">Super Admin</span>
           </div>
         </div>
+        
         <Link
           href="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors w-full"
+          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-all duration-300 group"
         >
-          <LogOut className="w-5 h-5" />
-          Sign Out
+          <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          SIGN OUT
         </Link>
       </div>
     </div>
