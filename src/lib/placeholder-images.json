@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-library",
+      "description": "A clean, modern library interior with tall bookshelves and sunlight.",
+      "imageUrl": "https://picsum.photos/seed/libra-hero/1200/600",
+      "imageHint": "modern library"
+    },
+    {
+      "id": "admin-avatar",
+      "description": "Professional administrative headshot.",
+      "imageUrl": "https://picsum.photos/seed/admin-user/100/100",
+      "imageHint": "professional person"
+    }
+  ]
 }
