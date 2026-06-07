@@ -12,23 +12,27 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Search
+  Search,
+  ShieldAlert
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "@/context/auth-context"
 
-const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Catalog", href: "/dashboard/books", icon: BookOpen },
-  { name: "Members", href: "/dashboard/members", icon: Users },
-  { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
-  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3 },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+const NAV_ITEMS = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["Super Admin", "Librarian"] },
+  { name: "Catalog", href: "/dashboard/books", icon: BookOpen, roles: ["Super Admin", "Librarian"] },
+  { name: "Members", href: "/dashboard/members", icon: Users, roles: ["Super Admin", "Librarian"] },
+  { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight, roles: ["Super Admin", "Librarian"] },
+  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3, roles: ["Super Admin"] },
+  { name: "User Management", href: "/dashboard/users", icon: ShieldAlert, roles: ["Super Admin"] },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, roles: ["Super Admin"] },
 ]
 
 export function SidebarNav() {
   const pathname = usePathname()
   const router = useRouter()
+  const { user, logout } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
 
   const handleSearch = (e: React.FormEvent) => {
@@ -38,6 +42,9 @@ export function SidebarNav() {
       setSearchQuery("")
     }
   }
+
+  const filteredItems = NAV_ITEMS.filter(item => user && item.roles.includes(user.role))
+  const userInitials = user?.name.split(' ').map(n => n[0]).join('').toUpperCase() || "JD"
 
   return (
     <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in shrink-0">
@@ -50,7 +57,7 @@ export function SidebarNav() {
             <h2 className="text-2xl font-headline font-bold text-white tracking-tight">
               LibraFlow
             </h2>
-            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold font-headline">Admin OS v4</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold font-headline">LMS PROTOCOL</p>
           </div>
         </div>
       </div>
@@ -68,7 +75,7 @@ export function SidebarNav() {
       </div>
 
       <nav className="flex-1 space-y-2 px-2 overflow-y-auto no-scrollbar font-headline">
-        {navItems.map((item) => {
+        {filteredItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
           return (
             <Link
@@ -97,21 +104,21 @@ export function SidebarNav() {
       <div className="mt-auto pt-6 border-t border-white/5 px-2 font-body">
         <div className="p-4 rounded-[24px] bg-white/5 mb-6 flex items-center gap-3 border border-white/5">
           <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg font-headline">
-            JD
+            {userInitials}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-white font-bold text-sm truncate">Jane Doe</span>
-            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider font-headline">Super Admin</span>
+            <span className="text-white font-bold text-sm truncate">{user?.name}</span>
+            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider font-headline">{user?.role}</span>
           </div>
         </div>
         
-        <Link
-          href="/"
-          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-all duration-300 group font-headline font-semibold"
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-rose-500 hover:bg-rose-500/10 transition-all duration-300 group font-headline"
         >
           <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           SIGN OUT
-        </Link>
+        </button>
       </div>
     </div>
   )

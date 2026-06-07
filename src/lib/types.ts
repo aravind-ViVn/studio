@@ -54,3 +54,14 @@ export interface AuditEvent {
   user: string;
   type: 'info' | 'success' | 'warning' | 'error';
 }
+
+export type UserRole = 'Super Admin' | 'Librarian';
+
+export interface SystemUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  status: 'Active' | 'Inactive';
+  joinDate: string;
+}
