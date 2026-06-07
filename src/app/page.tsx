@@ -40,20 +40,20 @@ export default function LoginPage() {
             </div>
             
             <div className="space-y-8 mt-20">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-widest text-white/90">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-widest text-white/90 font-headline">
                 <Sparkles className="w-3 h-3" />
                 Next-Gen Archive System
               </div>
               <h1 className="text-6xl font-headline font-bold text-white leading-[1.1] tracking-tight">
                 Design <br />For The <br /><span className="text-white/60">Modern Era.</span>
               </h1>
-              <p className="text-white/80 text-xl max-w-sm font-medium leading-relaxed">
+              <p className="text-white/80 text-xl max-w-sm font-medium leading-relaxed font-body">
                 Streamlining knowledge discovery with beautiful, high-performance library management.
               </p>
             </div>
           </div>
           
-          <div className="relative z-10 flex items-center gap-6 text-white/40 text-sm font-bold tracking-widest uppercase">
+          <div className="relative z-10 flex items-center gap-6 text-white/40 text-sm font-bold tracking-widest uppercase font-headline">
             <span>Enterprise v4.0</span>
             <div className="w-1 h-1 bg-white/20 rounded-full" />
             <span>Secure Access</span>
@@ -61,7 +61,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side - Form */}
-        <div className="p-8 lg:p-20 flex flex-col justify-center">
+        <div className="p-8 lg:p-20 flex flex-col justify-center font-body">
           <div className="w-full max-w-sm mx-auto space-y-10">
             <div className="space-y-3">
               <h2 className="text-4xl font-bold font-headline text-white tracking-tight">Staff Portal</h2>
@@ -71,22 +71,22 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-white/70 ml-1">Work Email</Label>
+                  <Label htmlFor="email" className="text-sm font-semibold text-white/70 ml-1 font-body">Work Email</Label>
                   <div className="relative group">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input 
                       id="email" 
                       type="email" 
                       placeholder="admin@libraflow.io" 
-                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg"
+                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg font-body"
                       required
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center ml-1">
-                    <Label htmlFor="password" title="Password" className="text-sm font-semibold text-white/70">Password</Label>
-                    <button type="button" className="text-xs text-secondary hover:text-secondary/80 font-bold tracking-wide">RECOVER ACCESS</button>
+                    <Label htmlFor="password" title="Password" className="text-sm font-semibold text-white/70 font-body">Password</Label>
+                    <button type="button" className="text-xs text-secondary hover:text-secondary/80 font-bold tracking-wide font-headline">RECOVER ACCESS</button>
                   </div>
                   <div className="relative group">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -94,7 +94,7 @@ export default function LoginPage() {
                       id="password" 
                       type="password" 
                       placeholder="••••••••" 
-                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg"
+                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg font-body"
                       required
                     />
                   </div>
@@ -103,7 +103,7 @@ export default function LoginPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-14 gradient-primary text-white rounded-2xl font-bold text-lg shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full h-14 gradient-primary text-white rounded-2xl font-headline font-semibold text-lg shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -118,7 +118,7 @@ export default function LoginPage() {
             </form>
 
             <div className="pt-10 border-t border-white/5">
-              <p className="text-center text-xs text-muted-foreground font-medium uppercase tracking-[0.2em]">
+              <p className="text-center text-xs text-muted-foreground font-medium uppercase tracking-[0.2em] font-headline">
                 LibraFlow Security © 2026
               </p>
             </div>

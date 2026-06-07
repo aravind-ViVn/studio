@@ -50,24 +50,24 @@ export function SidebarNav() {
             <h2 className="text-2xl font-headline font-bold text-white tracking-tight">
               LibraFlow
             </h2>
-            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold">Admin OS v4</p>
+            <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold font-headline">Admin OS v4</p>
           </div>
         </div>
       </div>
 
-      <div className="px-2 mb-6">
+      <div className="px-2 mb-6 font-body">
         <form onSubmit={handleSearch} className="relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
           <Input 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Catalog Search..." 
-            className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50"
+            className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50 font-headline"
           />
         </form>
       </div>
 
-      <nav className="flex-1 space-y-2 px-2 overflow-y-auto no-scrollbar">
+      <nav className="flex-1 space-y-2 px-2 overflow-y-auto no-scrollbar font-headline">
         {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
           return (
@@ -94,20 +94,20 @@ export function SidebarNav() {
         })}
       </nav>
 
-      <div className="mt-auto pt-6 border-t border-white/5 px-2">
+      <div className="mt-auto pt-6 border-t border-white/5 px-2 font-body">
         <div className="p-4 rounded-[24px] bg-white/5 mb-6 flex items-center gap-3 border border-white/5">
-          <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg">
+          <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg font-headline">
             JD
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-white font-bold text-sm truncate">Jane Doe</span>
-            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider">Super Admin</span>
+            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider font-headline">Super Admin</span>
           </div>
         </div>
         
         <Link
           href="/"
-          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-all duration-300 group"
+          className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-all duration-300 group font-headline font-semibold"
         >
           <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           SIGN OUT

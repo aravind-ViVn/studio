@@ -57,17 +57,17 @@ export default function Dashboard() {
         <div className="absolute top-0 right-0 w-[300px] h-full gradient-primary opacity-20 blur-[80px]" />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="space-y-4 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-primary-foreground uppercase tracking-widest border border-white/10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-primary-foreground uppercase tracking-widest border border-white/10 font-headline">
               <Activity className="w-3 h-3 text-secondary" />
               Real-time Analytics
             </div>
             <h1 className="text-5xl font-bold font-headline text-white tracking-tight">Good morning, Jane.</h1>
-            <p className="text-muted-foreground text-lg max-w-xl">
+            <p className="text-muted-foreground text-lg max-w-xl font-body">
               Your library is seeing a <span className="text-white font-bold">15% increase</span> in engagement this week. Here's a summary of today's activities.
             </p>
           </div>
           <div className="flex gap-4">
-            <Button size="lg" onClick={() => router.push('/dashboard/transactions')} className="rounded-2xl h-14 px-8 gradient-primary font-bold shadow-lg hover:scale-[1.02] transition-transform">
+            <Button size="lg" onClick={() => router.push('/dashboard/transactions')} className="rounded-2xl h-14 px-8 gradient-primary font-headline font-semibold shadow-lg hover:scale-[1.02] transition-transform">
               <Plus className="w-5 h-5 mr-2" /> NEW TRANSACTION
             </Button>
           </div>
@@ -88,14 +88,14 @@ export default function Dashboard() {
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1">Growth</span>
-                  <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg">
+                  <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-1 font-headline">Growth</span>
+                  <div className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-lg font-headline">
                     <TrendingUp className="w-3 h-3" /> {stat.trend}
                   </div>
                 </div>
               </div>
               <div>
-                <p className="text-sm font-bold text-white/50 uppercase tracking-widest mb-1">{stat.label}</p>
+                <p className="text-sm font-bold text-white/50 uppercase tracking-widest mb-1 font-headline">{stat.label}</p>
                 <h3 className="text-4xl font-bold font-headline text-white">{stat.value}</h3>
               </div>
             </CardContent>
@@ -110,14 +110,14 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle className="text-2xl font-headline font-bold text-white">Engagement Flow</CardTitle>
-                <p className="text-sm text-white/40 font-medium">Monthly lending trends over time</p>
+                <p className="text-sm text-white/40 font-medium font-body">Monthly lending trends over time</p>
               </div>
-              <Button onClick={() => router.push('/dashboard/reports')} variant="outline" size="sm" className="bg-white/5 border-white/10 rounded-xl text-xs font-bold">
+              <Button onClick={() => router.push('/dashboard/reports')} variant="outline" size="sm" className="bg-white/5 border-white/10 rounded-xl text-xs font-headline font-semibold">
                 VIEW FULL REPORT <ArrowUpRight className="ml-2 w-3 h-3" />
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="h-[350px] p-6 pt-0">
+          <CardContent className="h-[350px] p-6 pt-0 font-body">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={borrowingData}>
                 <defs>
@@ -131,16 +131,16 @@ export default function Dashboard() {
                   dataKey="month" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600}} 
+                  tick={{fill: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600, fontFamily: 'Manrope'}} 
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{fill: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600}} 
+                  tick={{fill: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600, fontFamily: 'Manrope'}} 
                 />
                 <Tooltip 
-                  contentStyle={{backgroundColor: '#1E293B', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)'}} 
+                  contentStyle={{backgroundColor: '#1E293B', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', fontFamily: 'Manrope'}} 
                   itemStyle={{color: '#fff'}}
                 />
                 <Area 
@@ -159,7 +159,7 @@ export default function Dashboard() {
         <Card className="glass-card border-none rounded-[32px] p-2">
           <CardHeader className="p-8">
             <CardTitle className="text-2xl font-headline font-bold text-white">Activity Log</CardTitle>
-            <p className="text-sm text-white/40 font-medium">Recent events from your staff</p>
+            <p className="text-sm text-white/40 font-medium font-body">Recent events from your staff</p>
           </CardHeader>
           <CardContent className="p-6 pt-0 space-y-6">
             {activities.map((act, i) => (
@@ -169,16 +169,16 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1 min-w-0 border-b border-white/5 pb-4 group-last:border-none">
                   <div className="flex justify-between items-start">
-                    <p className="text-sm font-bold text-white truncate">{act.user}</p>
-                    <span className="text-[10px] font-bold text-white/30 uppercase shrink-0">{act.time}</span>
+                    <p className="text-sm font-bold text-white truncate font-body">{act.user}</p>
+                    <span className="text-[10px] font-bold text-white/30 uppercase shrink-0 font-headline">{act.time}</span>
                   </div>
-                  <p className="text-xs text-white/50 mt-1">
+                  <p className="text-xs text-white/50 mt-1 font-body">
                     Successfully <span className="text-secondary">{act.action}</span> {act.item}
                   </p>
                 </div>
               </div>
             ))}
-            <Button onClick={() => router.push('/dashboard/transactions')} variant="ghost" className="w-full text-xs font-bold tracking-widest text-primary hover:bg-primary/10 rounded-xl mt-4">
+            <Button onClick={() => router.push('/dashboard/transactions')} variant="ghost" className="w-full text-xs font-headline font-semibold tracking-widest text-primary hover:bg-primary/10 rounded-xl mt-4">
               SEE ALL ACTIVITY <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </CardContent>
