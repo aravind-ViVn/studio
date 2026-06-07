@@ -22,13 +22,14 @@ const navItems = [
   { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight },
   { name: "AI Discovery", href: "/dashboard/discovery", icon: Sparkles },
   { name: "Reports", href: "/dashboard/reports", icon: FileText },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
 export function SidebarNav() {
   const pathname = usePathname()
 
   return (
-    <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in">
+    <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in shrink-0">
       <div className="mb-10 px-4">
         <div className="flex items-center gap-3">
           <div className="p-2 gradient-primary rounded-xl">
@@ -43,9 +44,9 @@ export function SidebarNav() {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2 px-2">
+      <nav className="flex-1 space-y-2 px-2 overflow-y-auto no-scrollbar">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href))
           return (
             <Link
               key={item.name}

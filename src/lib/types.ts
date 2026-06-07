@@ -10,6 +10,7 @@ export interface Book {
   publishYear: number;
   availableCopies: number;
   totalCopies: number;
+  summary?: string;
 }
 
 export interface Member {
@@ -19,21 +20,28 @@ export interface Member {
   phone: string;
   joinDate: string;
   status: 'Active' | 'Inactive';
+  borrows: number;
+  initials: string;
+  color: string;
 }
 
 export interface Transaction {
   id: string;
   bookId: string;
+  bookTitle: string;
   memberId: string;
+  memberName: string;
   borrowDate: string;
   dueDate: string;
   returnDate?: string;
   status: 'Borrowed' | 'Returned' | 'Overdue';
 }
 
-export interface DashboardStats {
-  totalBooks: number;
-  totalMembers: number;
-  borrowedBooks: number;
-  overdueBooks: number;
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
 }
