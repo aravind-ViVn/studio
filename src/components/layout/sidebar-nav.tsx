@@ -13,23 +13,19 @@ import {
   LogOut,
   ChevronRight,
   Search,
-  ShieldAlert
+  ShieldAlert,
+  X
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth-context"
 
-const NAV_ITEMS = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["Super Admin", "Librarian"] },
-  { name: "Catalog", href: "/dashboard/books", icon: BookOpen, roles: ["Super Admin", "Librarian"] },
-  { name: "Members", href: "/dashboard/members", icon: Users, roles: ["Super Admin", "Librarian"] },
-  { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight, roles: ["Super Admin", "Librarian"] },
-  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3, roles: ["Super Admin"] },
-  { name: "User Management", href: "/dashboard/users", icon: ShieldAlert, roles: ["Super Admin"] },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings, roles: ["Super Admin"] },
-]
+interface SidebarNavProps {
+  onClose?: () => void;
+}
 
-export function SidebarNav() {
+export function SidebarNav({ onClose }: SidebarNavProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuth()
@@ -40,6 +36,7 @@ export function SidebarNav() {
     if (searchQuery.trim()) {
       router.push(`/dashboard/search?q=${encodeURIComponent(searchQuery)}`)
       setSearchQuery("")
+      if (onClose) onClose();
     }
   }
 
@@ -47,8 +44,8 @@ export function SidebarNav() {
   const userInitials = user?.name.split(' ').map(n => n[0]).join('').toUpperCase() || "JD"
 
   return (
-    <div className="flex flex-col h-full glass-sidebar w-72 p-6 animate-fade-in shrink-0">
-      <div className="mb-8 px-4">
+    <div className="flex flex-col h-full glass-sidebar w-full lg:w-72 p-6 animate-fade-in">
+      <div className="mb-8 px-2 lg:px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 gradient-primary rounded-xl">
             <BookOpen className="w-6 h-6 text-white" />
@@ -60,6 +57,14 @@ export function SidebarNav() {
             <p className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-bold font-headline">LMS PROTOCOL</p>
           </div>
         </div>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onClose} 
+          className="lg:hidden h-10 w-10 rounded-xl hover:bg-white/5"
+        >
+          <X className="w-5 h-5 text-white/40" />
+        </Button>
       </div>
 
       <div className="px-2 mb-6 font-body">
@@ -69,7 +74,7 @@ export function SidebarNav() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Catalog Search..." 
-            className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50 font-headline"
+            className="h-11 pl-10 bg-white/5 border-white/5 rounded-xl text-xs font-bold text-white focus:border-primary/50 font-headline w-full"
           />
         </form>
       </div>
@@ -81,6 +86,7 @@ export function SidebarNav() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "group flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300",
                 isActive 
@@ -102,13 +108,13 @@ export function SidebarNav() {
       </nav>
 
       <div className="mt-auto pt-6 border-t border-white/5 px-2 font-body">
-        <div className="p-4 rounded-[24px] bg-white/5 mb-6 flex items-center gap-3 border border-white/5">
-          <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg font-headline">
+        <div className="p-4 rounded-[24px] bg-white/5 mb-6 flex items-center gap-3 border border-white/5 overflow-hidden">
+          <div className="w-10 h-10 rounded-xl gradient-secondary flex items-center justify-center font-bold text-white shadow-lg font-headline shrink-0">
             {userInitials}
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-white font-bold text-sm truncate">{user?.name}</span>
-            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider font-headline">{user?.role}</span>
+            <span className="text-[10px] uppercase text-white/40 font-bold tracking-wider font-headline truncate">{user?.role}</span>
           </div>
         </div>
         
@@ -123,3 +129,13 @@ export function SidebarNav() {
     </div>
   )
 }
+
+const NAV_ITEMS = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["Super Admin", "Librarian"] },
+  { name: "Catalog", href: "/dashboard/books", icon: BookOpen, roles: ["Super Admin", "Librarian"] },
+  { name: "Members", href: "/dashboard/members", icon: Users, roles: ["Super Admin", "Librarian"] },
+  { name: "Transactions", href: "/dashboard/transactions", icon: ArrowLeftRight, roles: ["Super Admin", "Librarian"] },
+  { name: "Analytics & Reports", href: "/dashboard/reports", icon: BarChart3, roles: ["Super Admin"] },
+  { name: "User Management", href: "/dashboard/users", icon: ShieldAlert, roles: ["Super Admin"] },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings, roles: ["Super Admin"] },
+]

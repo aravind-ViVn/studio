@@ -37,12 +37,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6 overflow-hidden relative">
+    <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-4 lg:p-6 overflow-hidden relative">
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/20 blur-[120px] rounded-full" />
 
-      <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 glass-card rounded-[32px] overflow-hidden animate-fade-in shadow-2xl">
+      <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 glass-card rounded-[24px] lg:rounded-[32px] overflow-hidden animate-fade-in shadow-2xl">
         
+        {/* Visual Side (Hidden on Mobile) */}
         <div className="hidden lg:flex flex-col justify-between p-16 relative overflow-hidden gradient-primary">
           <div className="absolute inset-0 bg-black/10 backdrop-blur-[2px]" />
           <div className="relative z-10">
@@ -74,16 +75,17 @@ export default function LoginPage() {
           </div>
         </div>
 
+        {/* Form Side */}
         <div className="p-8 lg:p-20 flex flex-col justify-center font-body">
           <div className="w-full max-w-sm mx-auto space-y-10">
             <div className="space-y-3">
-              <h2 className="text-4xl font-bold font-headline text-white tracking-tight">Staff Portal</h2>
-              <p className="text-muted-foreground text-lg">Enter your secure credentials to continue.</p>
+              <h2 className="text-3xl lg:text-4xl font-bold font-headline text-white tracking-tight">Staff Portal</h2>
+              <p className="text-muted-foreground text-base lg:text-lg">Enter secure credentials to continue.</p>
             </div>
 
             {error && (
               <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 text-rose-400 text-sm font-bold animate-in-up">
-                <AlertCircle className="w-5 h-5" />
+                <AlertCircle className="w-5 h-5 shrink-0" />
                 {error}
               </div>
             )}
@@ -100,7 +102,7 @@ export default function LoginPage() {
                       placeholder="admin@libraflow.com" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg"
+                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-base lg:text-lg w-full"
                       required
                     />
                   </div>
@@ -108,7 +110,7 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center ml-1">
                     <Label htmlFor="password" title="Password" className="text-sm font-bold text-white/70">Password</Label>
-                    <Link href="/forgot-password" title="Forgot Password" className="text-xs text-secondary hover:text-secondary/80 font-bold tracking-wide font-headline">RECOVER ACCESS</Link>
+                    <Link href="/forgot-password" title="Forgot Password" className="text-[10px] text-secondary hover:text-secondary/80 font-bold tracking-wide font-headline uppercase">RECOVER ACCESS</Link>
                   </div>
                   <div className="relative group">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
@@ -118,7 +120,7 @@ export default function LoginPage() {
                       placeholder="••••••••" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-lg"
+                      className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50 transition-all text-base lg:text-lg w-full"
                       required
                     />
                   </div>
@@ -128,15 +130,15 @@ export default function LoginPage() {
                     id="remember" 
                     checked={rememberMe} 
                     onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                    className="h-5 w-5 rounded-lg border-white/10 data-[state=checked]:bg-primary"
+                    className="h-6 w-6 rounded-lg border-white/10 data-[state=checked]:bg-primary shrink-0"
                   />
-                  <label htmlFor="remember" className="text-sm font-bold text-white/50 cursor-pointer select-none">Remember this session</label>
+                  <label htmlFor="remember" className="text-xs lg:text-sm font-bold text-white/50 cursor-pointer select-none">Remember session</label>
                 </div>
               </div>
 
               <Button 
                 type="submit" 
-                className="w-full h-14 gradient-primary text-white rounded-2xl font-headline font-semibold text-lg shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full h-14 gradient-primary text-white rounded-2xl font-headline font-semibold text-base lg:text-lg shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -151,7 +153,7 @@ export default function LoginPage() {
             </form>
 
             <div className="pt-10 border-t border-white/5 text-center">
-              <p className="text-xs text-muted-foreground font-bold uppercase tracking-[0.2em] font-headline">
+              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] font-headline">
                 LibraFlow Protocol © 2026
               </p>
             </div>
