@@ -50,9 +50,9 @@ const initialTransactions: Transaction[] = [
 ];
 
 const initialAuditLogs: AuditEvent[] = [
-  { id: "A-001", timestamp: "Oct 20, 2026 10:45 AM", action: "BORROW", details: "Alice Johnson borrowed The Great Gatsby", user: "admin_jane", type: "info" },
-  { id: "A-002", timestamp: "Oct 19, 2026 02:15 PM", action: "MEMBER_REG", details: "New member Elena Rodriguez registered", user: "admin_jane", type: "success" },
-  { id: "A-003", timestamp: "Oct 18, 2026 09:00 AM", action: "ASSET_ADD", details: "Zero to One published to archive", user: "admin_jane", type: "success" },
+  { id: "A-001", timestamp: "Oct 20, 2026 10:45 AM", action: "BORROW", details: "Alice Johnson borrowed The Great Gatsby", user: "admin_jane", type: "info", entityId: "T-8821", entityType: "Transaction" },
+  { id: "A-002", timestamp: "Oct 19, 2026 02:15 PM", action: "MEMBER_REG", details: "New member Elena Rodriguez registered", user: "admin_jane", type: "success", entityId: "3", entityType: "Member" },
+  { id: "A-003", timestamp: "Oct 18, 2026 09:00 AM", action: "ASSET_ADD", details: "Zero to One published to archive", user: "admin_jane", type: "success", entityId: "6", entityType: "Book" },
 ];
 
 export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -62,35 +62,42 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditEvent[]>(initialAuditLogs);
 
-  const addAudit = (action: string, details: string, type: AuditEvent['type'] = 'info') => {
+  const addAudit = (action: string, details: string, type: AuditEvent['type'] = 'info', entityId?: string, entityType?: AuditEvent['entityType'], previousState?: string, newState?: string) => {
     const newLog: AuditEvent = {
       id: `A-${Math.floor(Math.random() * 9000 + 1000)}`,
       timestamp: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
       action,
       details,
       user: "admin_jane",
-      type
+      type,
+      entityId,
+      entityType,
+      previousState,
+      newState
     };
     setAuditLogs(prev => [newLog, ...prev]);
   };
 
   const addBook = (book: Omit<Book, 'id'>) => {
-    const newBook = { ...book, id: Math.random().toString(36).substr(2, 9) };
+    const id = Math.random().toString(36).substr(2, 9);
+    const newBook = { ...book, id };
     setBooks(prev => [...prev, newBook]);
     addNotification("Asset Added", `${book.title} published to archive`, "success");
-    addAudit("ASSET_ADD", `${book.title} added to catalog`, "success");
+    addAudit("ASSET_ADD", `${book.title} added to catalog`, "success", id, "Book", undefined, JSON.stringify(newBook));
     toast({ title: "Success", description: "Book added to catalog." });
   };
 
   const updateBook = (id: string, updatedFields: Partial<Book>) => {
+    const prevBook = books.find(b => b.id === id);
     setBooks(prev => prev.map(b => b.id === id ? { ...b, ...updatedFields } : b));
-    addAudit("ASSET_UPDATE", `Updated record for ID: ${id}`);
+    addAudit("ASSET_UPDATE", `Updated record for ID: ${id}`, "info", id, "Book", JSON.stringify(prevBook), JSON.stringify({ ...prevBook, ...updatedFields }));
     toast({ title: "Updated", description: "Record synchronized successfully." });
   };
 
   const deleteBook = (id: string) => {
+    const prevBook = books.find(b => b.id === id);
     setBooks(prev => prev.filter(b => b.id !== id));
-    addAudit("ASSET_DELETE", `Removed asset ID: ${id}`, "warning");
+    addAudit("ASSET_DELETE", `Removed asset ID: ${id}`, "warning", id, "Book", JSON.stringify(prevBook));
     toast({ title: "Archived", description: "Entry removed from directory." });
   };
 
@@ -107,22 +114,25 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const addMember = (member: Omit<Member, 'id'>) => {
-    const newMember = { ...member, id: Math.random().toString(36).substr(2, 9) };
+    const id = Math.random().toString(36).substr(2, 9);
+    const newMember = { ...member, id };
     setMembers(prev => [...prev, newMember]);
     addNotification("New Registration", `${member.name} linked to system`, "success");
-    addAudit("MEMBER_REG", `${member.name} registered as new member`, "success");
+    addAudit("MEMBER_REG", `${member.name} registered as new member`, "success", id, "Member", undefined, JSON.stringify(newMember));
     toast({ title: "Registered", description: "New member profile initialized." });
   };
 
   const updateMember = (id: string, updatedFields: Partial<Member>) => {
+    const prevMember = members.find(m => m.id === id);
     setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updatedFields } : m));
-    addAudit("MEMBER_UPDATE", `Updated profile for ID: ${id}`);
+    addAudit("MEMBER_UPDATE", `Updated profile for ID: ${id}`, "info", id, "Member", JSON.stringify(prevMember), JSON.stringify({ ...prevMember, ...updatedFields }));
     toast({ title: "Updated", description: "Profile data updated." });
   };
 
   const deleteMember = (id: string) => {
+    const prevMember = members.find(m => m.id === id);
     setMembers(prev => prev.filter(m => m.id !== id));
-    addAudit("MEMBER_DELETE", `Deactivated member ID: ${id}`, "warning");
+    addAudit("MEMBER_DELETE", `Deactivated member ID: ${id}`, "warning", id, "Member", JSON.stringify(prevMember));
     toast({ title: "Deactivated", description: "Member link terminated." });
   };
 
@@ -131,8 +141,9 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const member = members.find(m => m.id === memberId);
     if (!book || !member) return;
 
+    const txId = `T-${Math.floor(Math.random() * 9000 + 1000)}`;
     const newTx: Transaction = {
-      id: `T-${Math.floor(Math.random() * 9000 + 1000)}`,
+      id: txId,
       bookId,
       bookTitle: book.title,
       memberId,
@@ -146,7 +157,7 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     updateBook(bookId, { availableCopies: book.availableCopies - 1, status: book.availableCopies <= 1 ? "Borrowed" : "Available" });
     updateMember(memberId, { borrows: (member.borrows || 0) + 1 });
     addNotification("Transmission", `${member.name} acquired ${book.title}`, "info");
-    addAudit("BORROW", `${member.name} borrowed ${book.title}`, "info");
+    addAudit("BORROW", `${member.name} borrowed ${book.title}`, "info", txId, "Transaction", undefined, JSON.stringify(newTx));
     toast({ title: "Dispatched", description: "Asset transmission confirmed." });
   };
 
@@ -154,17 +165,19 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const tx = transactions.find(t => t.id === transactionId);
     if (!tx || tx.status === 'Returned') return;
 
-    setTransactions(prev => prev.map(t => t.id === transactionId ? { ...t, status: "Returned", returnDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) } : t));
+    const returnDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    setTransactions(prev => prev.map(t => t.id === transactionId ? { ...t, status: "Returned", returnDate } : t));
     const book = books.find(b => b.id === tx.bookId);
     if (book) {
       updateBook(book.id, { availableCopies: book.availableCopies + 1, status: "Available" });
     }
     addNotification("Returned", `${tx.bookTitle} reintegrated into archive`, "success");
-    addAudit("RETURN", `${tx.memberName} returned ${tx.bookTitle}`, "success");
+    addAudit("RETURN", `${tx.memberName} returned ${tx.bookTitle}`, "success", transactionId, "Transaction", JSON.stringify(tx), JSON.stringify({ ...tx, status: "Returned", returnDate }));
     toast({ title: "Processed", description: "Asset return confirmed." });
   };
 
   const extendLoan = (transactionId: string, days: number) => {
+    const prevTx = transactions.find(t => t.id === transactionId);
     setTransactions(prev => prev.map(t => {
       if (t.id === transactionId) {
         const currentDue = new Date(t.dueDate);
@@ -173,13 +186,14 @@ export const LibraProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       return t;
     }));
-    addAudit("LOAN_EXTEND", `Extended loan for transaction: ${transactionId}`);
+    addAudit("LOAN_EXTEND", `Extended loan for transaction: ${transactionId}`, "info", transactionId, "Transaction");
     toast({ title: "Extended", description: "Loan duration updated." });
   };
 
   const voidTransaction = (id: string) => {
+    const prevTx = transactions.find(t => t.id === id);
     setTransactions(prev => prev.filter(t => t.id !== id));
-    addAudit("VOID_TX", `Voided transaction: ${id}`, "warning");
+    addAudit("VOID_TX", `Voided transaction: ${id}`, "warning", id, "Transaction", JSON.stringify(prevTx));
     toast({ title: "Voided", description: "Transaction removed from system history." });
   };
 

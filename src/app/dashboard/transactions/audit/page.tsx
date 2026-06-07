@@ -15,7 +15,7 @@ export default function AuditLogPage() {
     <div className="space-y-10 animate-in-up">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button onClick={() => router.back()} variant="ghost" className="h-12 w-12 rounded-xl bg-white/5 hover:bg-white/10">
+          <Button onClick={() => router.push('/dashboard/transactions')} variant="ghost" className="h-12 w-12 rounded-xl bg-white/5 hover:bg-white/10">
             <ArrowLeft className="w-6 h-6" />
           </Button>
           <div>
@@ -64,8 +64,12 @@ export default function AuditLogPage() {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" className="h-10 w-10 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ChevronRight className="w-5 h-5 text-white/30" />
+                  <Button 
+                    onClick={() => router.push(`/dashboard/transactions/audit/${log.id}`)}
+                    variant="ghost" 
+                    className="h-10 w-10 rounded-xl bg-accent/10 hover:bg-accent text-accent hover:text-white transition-all shadow-lg flex items-center justify-center"
+                  >
+                    <ChevronRight className="w-5 h-5" />
                   </Button>
                 </div>
               ))}
