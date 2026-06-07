@@ -46,19 +46,6 @@ export interface Notification {
   read: boolean;
 }
 
-export interface AuditEvent {
-  id: string;
-  timestamp: string;
-  action: string;
-  details: string;
-  user: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  entityId?: string;
-  entityType?: 'Book' | 'Member' | 'Transaction';
-  previousState?: string;
-  newState?: string;
-}
-
 export type UserRole = 'Super Admin' | 'Librarian';
 
 export interface SystemUser {

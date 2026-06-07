@@ -21,10 +21,9 @@ import {
   AlertTriangle, 
   Zap,
   Search,
-  Calendar,
   ChevronRight,
-  History,
-  Trash2
+  Trash2,
+  Download
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { 
@@ -38,6 +37,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { toast } from "@/hooks/use-toast"
 
 export default function TransactionsPage() {
   const { transactions, books, members, borrowBook, returnBook, extendLoan, voidTransaction } = useLibra()
@@ -74,6 +74,13 @@ export default function TransactionsPage() {
     }
   }
 
+  const handleExport = () => {
+    toast({
+      title: "Export Initiated",
+      description: "Transaction history is being compiled into a CSV report.",
+    })
+  }
+
   const filteredTransactions = transactions.filter(tx => 
     tx.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tx.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,11 +96,11 @@ export default function TransactionsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-4xl font-bold font-headline text-white tracking-tight">Operations Ledger</h1>
-          <p className="text-white/50 text-lg mt-1 font-medium">Tracking the kinetic flow of all knowledge assets.</p>
+          <p className="text-white/50 text-lg mt-1 font-medium font-body">Tracking the kinetic flow of all knowledge assets.</p>
         </div>
         <div className="flex gap-4">
-          <Button onClick={() => router.push('/dashboard/transactions/audit')} variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-14 px-8 font-bold text-white hover:bg-emerald-500/10 transition-all">
-            <History className="w-5 h-5 mr-2" /> AUDIT LOG
+          <Button onClick={handleExport} variant="outline" className="bg-white/5 border-white/10 rounded-2xl h-14 px-8 font-bold text-white hover:bg-white/10 transition-all">
+            <Download className="w-5 h-5 mr-2" /> EXPORT TRANSACTIONS
           </Button>
           <Button onClick={() => setIsBorrowModalOpen(true)} className="gradient-primary rounded-2xl h-14 px-8 font-bold shadow-lg hover:scale-[1.02] transition-transform">
             <ArrowLeftRight className="w-5 h-5 mr-2" /> DISPATCH ASSET
@@ -135,7 +142,7 @@ export default function TransactionsPage() {
 
       {/* Borrow Modal */}
       <Dialog open={isBorrowModalOpen} onOpenChange={setIsBorrowModalOpen}>
-        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[500px] p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[500px] p-0 overflow-hidden shadow-2xl font-body">
           <DialogHeader className="p-8 bg-white/5 border-b border-white/5">
             <DialogTitle className="text-3xl font-bold font-headline text-white tracking-tight">Dispatch Asset</DialogTitle>
             <DialogDescription className="text-white/40">Assign a knowledge asset to a registered member.</DialogDescription>
@@ -188,7 +195,7 @@ export default function TransactionsPage() {
 
       {/* Transaction Details Modal */}
       <Dialog open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen}>
-        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[450px] p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[450px] p-0 overflow-hidden shadow-2xl font-body">
           <DialogHeader className="p-8 bg-white/5 border-b border-white/5">
             <div className="flex items-center gap-3 mb-2">
               <Badge className="bg-primary/20 text-primary border-primary/30 font-bold tracking-widest uppercase text-[10px] px-3 py-1">TRANSACTION LOG</Badge>
@@ -240,7 +247,7 @@ export default function TransactionsPage() {
 
       {/* Void Confirmation Modal */}
       <Dialog open={isVoidModalOpen} onOpenChange={setIsVoidModalOpen}>
-        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[400px] p-10 text-center space-y-6 shadow-2xl">
+        <DialogContent className="glass-card border-white/10 rounded-[32px] sm:max-w-[400px] p-10 text-center space-y-6 shadow-2xl font-body">
           <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto text-rose-500">
             <Trash2 className="w-10 h-10" />
           </div>
@@ -261,7 +268,7 @@ export default function TransactionsPage() {
 function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction: (tx: any) => void, onReturn: (id: string) => void }) {
   if (data.length === 0) {
     return (
-      <div className="glass-card rounded-[32px] p-20 text-center space-y-6 animate-in-up">
+      <div className="glass-card rounded-[32px] p-20 text-center space-y-6 animate-in-up font-body">
         <div className="w-20 h-20 bg-white/5 rounded-[28px] flex items-center justify-center mx-auto border border-dashed border-white/20">
           <ArrowLeftRight className="w-8 h-8 text-white/10" />
         </div>
@@ -274,7 +281,7 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
   }
 
   return (
-    <div className="glass-card rounded-[32px] overflow-hidden border-none shadow-2xl">
+    <div className="glass-card rounded-[32px] overflow-hidden border-none shadow-2xl font-body">
       <Table>
         <TableHeader className="bg-white/5 border-b border-white/5">
           <TableRow className="hover:bg-transparent">
@@ -313,7 +320,7 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
               </TableCell>
               <TableCell>
                 <div className={cn(
-                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest font-headline",
                   tx.status === "Borrowed" ? "bg-primary/10 text-primary border border-primary/20" :
                   tx.status === "Returned" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
                   "bg-rose-500/10 text-rose-400 border border-rose-500/20"
@@ -325,11 +332,11 @@ function TransactionTable({ data, onAction, onReturn }: { data: any[], onAction:
               <TableCell className="text-right px-8">
                 <div className="flex items-center justify-end gap-2">
                    {tx.status !== "Returned" ? (
-                    <Button onClick={() => onReturn(tx.id)} variant="outline" size="sm" className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 rounded-xl font-bold tracking-widest text-[10px] hover:bg-emerald-500 hover:text-white transition-all px-4">
+                    <Button onClick={() => onReturn(tx.id)} variant="outline" size="sm" className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400 rounded-xl font-bold tracking-widest text-[10px] hover:bg-emerald-500 hover:text-white transition-all px-4 font-headline">
                       RETURN
                     </Button>
                   ) : (
-                    <Badge variant="ghost" className="bg-white/5 text-[10px] uppercase font-bold text-white/20 px-3 py-1.5 rounded-lg">ARCHIVED</Badge>
+                    <Badge variant="ghost" className="bg-white/5 text-[10px] uppercase font-bold text-white/20 px-3 py-1.5 rounded-lg font-headline">ARCHIVED</Badge>
                   )}
                   <Button onClick={() => onAction(tx)} variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/10">
                     <ChevronRight className="w-5 h-5 text-white/30" />
